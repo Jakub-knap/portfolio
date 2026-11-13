@@ -318,11 +318,49 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 
 .pg-in > .wrap { opacity: 0; transform: translateY(34px); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
 .pg-in.in > .wrap { opacity: 1; transform: none; }
-@media (max-width: 999px), (hover: none) {
-  html { scroll-snap-type: y proximity; }
-  .hero, .apps, .services, .about, .process, .contact { scroll-snap-align: start; }
-}
 @media (prefers-reduced-motion: reduce) { .pg-in > .wrap { opacity: 1; transform: none; } }
+/* next / back-to-top button */
+.nextbtn { position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 45; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px 9px 18px; border-radius: 99px; border: 1px solid rgba(160,185,255,.4); background: rgba(10,20,62,.82); color: #fff; font: 700 14px var(--body); cursor: pointer; box-shadow: 0 10px 28px -10px rgba(0,0,0,.7); opacity: 0; pointer-events: none; transition: opacity .35s, background .2s; }
+.nextbtn.show { opacity: 1; pointer-events: auto; }
+.nextbtn:hover { background: #2f5bff; }
+.nextbtn svg { width: 18px; height: 18px; animation: nbounce 1.6s ease-in-out infinite; }
+.nextbtn[data-mode="up"] svg { transform: rotate(180deg); animation: nbounceup 1.6s ease-in-out infinite; }
+.nextbtn .t-up, .nextbtn[data-mode="up"] .t-dn { display: none; }
+.nextbtn[data-mode="up"] .t-up { display: inline; }
+@keyframes nbounce { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+@keyframes nbounceup { 0%, 100% { transform: rotate(180deg) translateY(-2px); } 50% { transform: rotate(180deg) translateY(3px); } }
+@media (prefers-reduced-motion: reduce) { .nextbtn svg, .nextbtn[data-mode="up"] svg { animation: none; } }
+/* mascot */
+.mascot { display: none; }
+@media (min-width: 1000px) and (hover: hover) {
+  .about > .wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label mascot" "big mascot" "cols cols"; column-gap: 40px; align-items: start; }
+  .about .label { grid-area: label; }
+  .about .big { grid-area: big; align-self: start; }
+  .about .cols { grid-area: cols; }
+  .mascot { display: block; grid-area: mascot; position: relative; align-self: center; justify-self: end; width: clamp(150px, 25vh, 280px); animation: mfloat 6s ease-in-out infinite; pointer-events: none; }
+  .mascot svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .bubble { position: absolute; left: -4%; top: 2%; z-index: 2; background: #fff; color: #1428a8; font: 800 clamp(13px, 2.2vh, 18px) var(--display); padding: 8px 16px; border-radius: 16px 16px 16px 4px; box-shadow: 0 10px 24px -8px rgba(0,0,0,.6); animation: bpop 6s ease-in-out infinite; transform-origin: bottom left; }
+}
+@keyframes mfloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes bpop { 0%, 8% { transform: scale(0); } 14%, 70% { transform: scale(1); } 78%, 100% { transform: scale(0); } }
+@media (prefers-reduced-motion: reduce) { .mascot, .bubble { animation: none; } .bubble { transform: none; } }
+
+/* page-turn effect on exit + strict paging on mobile */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero > .wrap, .apps > .wrap, .services > .wrap, .about > .wrap, .process > .wrap, .stats-s > .wrap { animation: pageout linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+  }
+}
+@keyframes pageout { to { scale: .94; translate: 0 -28px; } }
+@media (max-width: 999px), (hover: none) {
+  html { scroll-snap-type: y mandatory; }
+  .hero, .apps, .services, .about, .process, .contact, .stats-s { scroll-snap-align: start; scroll-snap-stop: always; }
+  .stats-s { display: flex; flex-direction: column; justify-content: center; min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: 0; }
+  .stats-s .facts { grid-template-columns: 1fr; gap: 16px; width: 100%; }
+  .stats-s .facts div { padding: 22px 26px; display: flex; align-items: baseline; gap: 18px; }
+  .stats-s .facts b { font-size: 64px; margin: 0; min-width: 150px; }
+  .stats-s .facts span { font-size: 17px; }
+}
 /* fit-to-screen compaction (desktop) */
 @media (min-width: 1000px) and (hover: hover) {
   .apps, .services, .about, .process { padding-top: clamp(54px, 8vh, 88px); padding-bottom: clamp(20px, 4vh, 40px); }
@@ -420,6 +458,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
   <div class="askbtns"><button type="button" class="go" id="ask-go"></button><button type="button" class="no" id="ask-no" aria-label="Zavrieť">✕</button></div>
 </div>
 <nav class="pagenav" id="pagenav" aria-label="Sekcie"></nav>
+<button type="button" class="nextbtn" id="nextbtn" data-mode="down" aria-label="Ďalej"><span class="t-dn" data-cs="Dále">Ďalej</span><span class="t-up" data-cs="Nahoru">Hore</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 <div id="cform-back" hidden></div>
 <form id="cform" role="dialog" aria-modal="true" aria-labelledby="cf-t" novalidate hidden>
   <button type="button" class="cf-x" id="cf-x" aria-label="Zavrieť">✕</button>
@@ -519,6 +558,73 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 
   <section class="about" id="o-mne">
     <div class="wrap">
+      <div class="mascot" aria-hidden="false"><span class="bubble" data-cs="Ahoj!">Ahoj!</span><svg role="img" aria-label="Maskot" viewBox="0 0 380 440" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<radialGradient id="gl" cx="50%" cy="48%" r="52%"><stop offset="0" stop-color="#3f6bff" stop-opacity=".55"/><stop offset="1" stop-color="#3f6bff" stop-opacity="0"/></radialGradient>
+<linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b3f9e"/><stop offset="1" stop-color="#121c52"/></linearGradient>
+<radialGradient id="iris" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#8be4ff"/><stop offset=".55" stop-color="#3f8cff"/><stop offset="1" stop-color="#1a3fbf"/></radialGradient>
+<linearGradient id="hood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a66ff"/><stop offset="1" stop-color="#1f3fc9"/></linearGradient>
+</defs>
+<circle cx="190" cy="215" r="190" fill="url(#gl)"/>
+<!-- floating chips -->
+<g>
+<rect x="18" y="70" width="86" height="52" rx="14" fill="#0e1a52" stroke="#4b6bff" stroke-opacity=".7"/>
+<text x="61" y="104" text-anchor="middle" font-family="monospace" font-weight="700" font-size="24" fill="#7fe3ff">&lt;/&gt;</text>
+<rect x="284" y="40" width="64" height="64" rx="16" fill="#0e1a52" stroke="#4b6bff" stroke-opacity=".7"/>
+<rect x="302" y="52" width="28" height="42" rx="7" fill="none" stroke="#fff" stroke-width="3"/><circle cx="316" cy="86" r="2.4" fill="#fff"/>
+<rect x="298" y="132" width="70" height="48" rx="14" fill="#0e1a52" stroke="#4b6bff" stroke-opacity=".7"/>
+<path d="M319 157l9 9 16-18" fill="none" stroke="#7dffb0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<!-- hair back -->
+<path d="M92 190C84 100 128 56 192 56s108 44 100 134c-2 38 8 82-16 112-14 18-40 16-52 2H160c-12 14-38 16-52-2-24-30-14-74-16-112z" fill="url(#hair)"/>
+<!-- body -->
+<path d="M96 440c0-62 34-106 94-106s94 44 94 106z" fill="url(#hood)"/>
+<path d="M150 338c12 22 28 30 40 30s28-8 40-30" fill="none" stroke="#b9ccff" stroke-width="5" stroke-linecap="round"/>
+<path d="M172 366v36M208 366v36" stroke="#dfe8ff" stroke-width="4" stroke-linecap="round"/>
+<circle cx="172" cy="406" r="5" fill="#dfe8ff"/><circle cx="208" cy="406" r="5" fill="#dfe8ff"/>
+<!-- neck -->
+<path d="M166 296h48v44c-12 12-36 12-48 0z" fill="#f6cdb6"/>
+<!-- head -->
+<ellipse cx="190" cy="204" rx="88" ry="92" fill="#ffe3d1"/>
+<!-- ears -->
+<ellipse cx="102" cy="212" rx="10" ry="15" fill="#ffd5bf"/><ellipse cx="278" cy="212" rx="10" ry="15" fill="#ffd5bf"/>
+<!-- eyes -->
+<g>
+<ellipse cx="148" cy="214" rx="21" ry="27" fill="#fff"/>
+<ellipse cx="232" cy="214" rx="21" ry="27" fill="#fff"/>
+<ellipse cx="149" cy="217" rx="16" ry="22" fill="url(#iris)"/>
+<ellipse cx="231" cy="217" rx="16" ry="22" fill="url(#iris)"/>
+<ellipse cx="149" cy="220" rx="8" ry="12" fill="#0b1650"/>
+<ellipse cx="231" cy="220" rx="8" ry="12" fill="#0b1650"/>
+<circle cx="141" cy="208" r="6.5" fill="#fff"/><circle cx="223" cy="208" r="6.5" fill="#fff"/>
+<circle cx="157" cy="229" r="3" fill="#fff" opacity=".9"/><circle cx="239" cy="229" r="3" fill="#fff" opacity=".9"/>
+<path d="M124 196c8-12 26-16 40-10M208 186c14-6 32-2 40 10" fill="none" stroke="#1a2466" stroke-width="5" stroke-linecap="round"/>
+</g>
+<!-- brows -->
+<path d="M128 172c8-6 20-8 30-4M222 168c10-4 22-2 30 4" fill="none" stroke="#1a2466" stroke-width="4" stroke-linecap="round"/>
+<!-- blush -->
+<ellipse cx="124" cy="250" rx="16" ry="9" fill="#ff8fa8" opacity=".45"/><ellipse cx="256" cy="250" rx="16" ry="9" fill="#ff8fa8" opacity=".45"/>
+<!-- nose + mouth -->
+<path d="M190 242l-3 6h6z" fill="#e9a58c"/>
+<path d="M168 262c8 14 36 14 44 0" fill="#c93d62" />
+<path d="M174 264c6 8 26 8 32 0z" fill="#ff8aa6"/>
+<path d="M168 262c8 14 36 14 44 0" fill="none" stroke="#9b2a4a" stroke-width="3" stroke-linecap="round"/>
+<!-- bangs -->
+<path d="M96 196C94 120 134 84 190 84s98 36 94 112c-14-34-34-52-58-60-10 26-34 46-70 52-22 4-42 4-60 8z" fill="url(#hair)"/>
+<path d="M120 108c24-18 60-24 92-12" fill="none" stroke="#5b86ff" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+<path d="M148 100c4 20 0 36-14 52M190 92c0 24-10 40-30 56" fill="none" stroke="#0d1546" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+<!-- headphones -->
+<path d="M88 206C84 112 132 70 190 70s106 42 102 136" fill="none" stroke="#62d4ff" stroke-width="11" stroke-linecap="round"/>
+<rect x="68" y="188" width="32" height="62" rx="15" fill="#3fc3f0"/><rect x="280" y="188" width="32" height="62" rx="15" fill="#3fc3f0"/>
+<rect x="74" y="196" width="14" height="46" rx="7" fill="#9be9ff" opacity=".7"/><rect x="292" y="196" width="14" height="46" rx="7" fill="#9be9ff" opacity=".7"/>
+<!-- waving hand -->
+<g transform="rotate(-14 300 330)">
+<path d="M284 372c-4-30 0-50 14-54l22-4c12 0 16 12 14 24l-4 34z" fill="#ffe3d1"/>
+<rect x="296" y="286" width="13" height="40" rx="6.5" fill="#ffe3d1"/><rect x="311" y="280" width="13" height="42" rx="6.5" fill="#ffe3d1"/><rect x="326" y="286" width="13" height="38" rx="6.5" fill="#ffe3d1"/><rect x="281" y="304" width="13" height="30" rx="6.5" fill="#ffe3d1" transform="rotate(-24 287 330)"/>
+<path d="M276 384c0-20 12-34 28-34h28c14 0 20 12 18 40z" fill="url(#hood)"/>
+</g>
+</svg>
+</div>
       <p class="label" data-cs="O mně">O mne</p>
       <p class="big" style="margin-top:14px"><span data-cs="Jeden člověk na celý projekt:">Jeden človek na celý projekt:</span> <span class="hl" data-cs="od nápadu po appku v Google Play.">od nápadu po appku v Google Play.</span></p>
       <div class="cols">
@@ -824,6 +930,56 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
       .catch(function () { cmsg.className = "cf-msg err"; cmsg.textContent = CF[lang].err; })
       .then(function () { csend.disabled = false; });
   });
+
+  /* next / top button */
+  (function () {
+    var btn = document.getElementById("nextbtn");
+    var sel = ".hero, .stats-s, .apps, .services, .about, .process, .contact";
+    function pages() { return [].slice.call(document.querySelectorAll(sel)).filter(function (p) { return p.offsetHeight > 0; }); }
+    function cur(ps) { var y = scrollY + innerHeight * .4, k = 0; ps.forEach(function (p, i) { if (p.offsetTop <= y) k = i; }); return k; }
+    var t = false;
+    function upd() {
+      t = false;
+      var ps = pages(), k = cur(ps), last = k === ps.length - 1;
+      btn.setAttribute("data-mode", last ? "up" : "down");
+      btn.setAttribute("aria-label", last ? "Hore" : "Ďalej");
+      btn.classList.toggle("show", k > 0);
+    }
+    function sched() { if (!t) { t = true; requestAnimationFrame(upd); } }
+    window.addEventListener("scroll", sched, { passive: true }); window.addEventListener("resize", sched);
+    btn.onclick = function () {
+      var ps = pages(), k = cur(ps);
+      if (k >= ps.length - 1) window.scrollTo({ top: 0, behavior: "smooth" });
+      else ps[k + 1].scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    upd();
+  })();
+
+  /* mobile: a swipe flips exactly one page */
+  (function () {
+    if (!("ontouchstart" in window)) return;
+    var sel = ".hero, .stats-s, .apps, .services, .about, .process, .contact";
+    var y0 = 0, t0 = 0, s0 = 0, x0 = 0, on = false;
+    function pages() { return [].slice.call(document.querySelectorAll(sel)).filter(function (p) { return p.offsetHeight > 0; }); }
+    document.addEventListener("touchstart", function (e) {
+      if (e.touches.length !== 1 || document.getElementById("detail").classList.contains("open") || !document.getElementById("cform").hidden || document.getElementById("ask").classList.contains("on")) { on = false; return; }
+      on = true; y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; t0 = Date.now(); s0 = scrollY;
+    }, { passive: true });
+    document.addEventListener("touchend", function (e) {
+      if (!on) return; on = false;
+      var t = e.changedTouches[0], dy = y0 - t.clientY, dx = x0 - t.clientX, dt = Date.now() - t0;
+      if (Math.abs(dy) < 45 || Math.abs(dy) < Math.abs(dx) * 1.3 || dt > 800) return;
+      var ps = pages(), k = 0, vh = innerHeight;
+      ps.forEach(function (p, i) { if (p.offsetTop <= s0 + vh * .5) k = i; });
+      var p = ps[k], tall = p.offsetHeight > vh + 6;
+      if (tall) { var bottom = p.offsetTop + p.offsetHeight; if (dy > 0 && bottom - s0 > vh + 6) return; if (dy < 0 && s0 > p.offsetTop + 6) return; }
+      var n = dy > 0 ? k + 1 : k - 1;
+      if (n < 0 || n >= ps.length) return;
+      var target = ps[n].offsetTop;
+      if (dy < 0 && ps[n].offsetHeight > vh + 6) target = ps[n].offsetTop + ps[n].offsetHeight - vh;
+      setTimeout(function () { window.scrollTo({ top: target, behavior: "smooth" }); }, 20);
+    }, { passive: true });
+  })();
 
   /* page navigation (desktop) */
   (function () {
