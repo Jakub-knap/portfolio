@@ -3,6 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+(function () {
+  var de = document.documentElement, ua = navigator.userAgent || "";
+  if (/FBAN|FBAV|FB_IAB|FBIOS|Instagram|LinkedInApp|Messenger|Twitter|TikTok|BytedanceWebview|musical_ly|Snapchat|Pinterest|Line\/|; wv\)/i.test(ua)) de.classList.add("inapp");
+  if (!window.matchMedia("(max-width: 999px), (hover: none)").matches) return;
+  /* phones + in-app browsers: page height fixed at load, changes only on rotation */
+  var w = innerWidth;
+  function setH() { de.style.setProperty("--pageh", innerHeight + "px"); de.classList.add("ph"); }
+  setH();
+  addEventListener("resize", function () { if (innerWidth !== w) { w = innerWidth; setH(); if (window.__fit) window.__fit(); } });
+})();
+</script>
 <title>Jakub Knap – aplikácie a weby na mieru pre malé firmy</title>
 <meta name="description" content="Weby, mobilné aplikácie a interné systémy na mieru pre malé firmy zo Slovenska a Česka. Pozrite si hotové projekty CNCdok, CampSync, KMG stav či DHZ Poplach.">
 <link rel="canonical" href="https://jakub-knap.vercel.app/">
@@ -347,6 +359,11 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 @keyframes nbounceup { 0%, 100% { transform: rotate(180deg) translateY(-2px); } 50% { transform: rotate(180deg) translateY(3px); } }
 @media (prefers-reduced-motion: reduce) { .nextbtn svg, .nextbtn[data-mode="up"] svg { animation: none; } }
 .ns-list { margin: 16px 0 0; padding-left: 18px; color: var(--muted, #b8c3ee); line-height: 1.5; } .ns-list a { color: #7cc4ff; }
+/* stable page height on phones (set by JS) */
+html.ph .hero, html.ph .apps, html.ph .services, html.ph .about, html.ph .process, html.ph .contact, html.ph .stats-s { min-height: var(--pageh); }
+/* in-app browsers (Facebook, Instagram, LinkedIn…): native snapping only, no scroll effects */
+html.inapp .pg-in > .wrap { opacity: 1; transform: none; transition: none; }
+html.inapp .hero > .wrap, html.inapp .apps > .wrap, html.inapp .services > .wrap, html.inapp .about > .wrap, html.inapp .process > .wrap, html.inapp .stats-s > .wrap { animation: none !important; }
 /* hero character */
 .hero-char { display: none; }
 .hero-char img { display: block; width: 100%; height: auto; }
@@ -983,7 +1000,7 @@ var EM = ["1jakub.knap1", "gmail.com"].join(String.fromCharCode(64));
 
   /* mobile: a swipe flips exactly one page */
   (function () {
-    if (!("ontouchstart" in window)) return;
+    if (!("ontouchstart" in window) || document.documentElement.classList.contains("inapp")) return;
     var sel = ".hero, .stats-s, .apps, .services, .about, .process, .contact";
     var y0 = 0, t0 = 0, s0 = 0, x0 = 0, on = false;
     function pages() { return [].slice.call(document.querySelectorAll(sel)).filter(function (p) { return p.offsetHeight > 0; }); }
@@ -1035,7 +1052,7 @@ var EM = ["1jakub.knap1", "gmail.com"].join(String.fromCharCode(64));
     var wraps = secs.slice(1).map(function (sc) { return sc.querySelector(":scope > .wrap"); });
     /* stable height on phones: the small viewport (URL bar shown) never changes while scrolling */
     var probe = document.createElement("div");
-    probe.style.cssText = "position:fixed;left:0;top:0;width:0;height:100vh;height:100svh;visibility:hidden;pointer-events:none";
+    probe.style.cssText = "position:fixed;left:0;top:0;width:0;height:100vh;height:100svh;height:var(--pageh,100svh);visibility:hidden;pointer-events:none";
     document.body.appendChild(probe);
     function fit() {
       wraps.forEach(function (w) { w.style.zoom = ""; });
