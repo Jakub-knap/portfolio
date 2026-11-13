@@ -741,7 +741,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
   })();
 
   /* contact form */
-  var WEB3_KEY = "";
+  var WEB3_KEY = "0a4b3815-2231-4ba1-b9b5-786ffde749db";
   var cform = document.getElementById("cform"), cback = document.getElementById("cform-back"), cmsg = document.getElementById("cf-msg"), csend = document.getElementById("cf-send");
   var CF = { sk: { req: "Vyplň všetky polia správne.", sending: "Odosielam…", ok: "Ďakujem! Správa je odoslaná, ozvem sa čoskoro.", err: "Nepodarilo sa odoslať. Skús to znova alebo napíš na 1jakub.knap1@gmail.com." }, cs: { req: "Vyplňte správně všechna pole.", sending: "Odesílám…", ok: "Děkuji! Zpráva je odeslána, brzy se ozvu.", err: "Odeslání se nepodařilo. Zkuste to znovu nebo napište na 1jakub.knap1@gmail.com." } };
   function openForm() { cform.hidden = false; cback.hidden = false; cmsg.textContent = ""; cmsg.className = "cf-msg"; setTimeout(function () { cform.fname.focus(); }, 60); }
