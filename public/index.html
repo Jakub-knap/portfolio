@@ -315,6 +315,36 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 }
 
 
+
+.pg-in > .wrap { opacity: 0; transform: translateY(34px); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+.pg-in.in > .wrap { opacity: 1; transform: none; }
+@media (max-width: 999px), (hover: none) {
+  html { scroll-snap-type: y proximity; }
+  .hero, .apps, .services, .about, .process, .contact { scroll-snap-align: start; }
+}
+@media (prefers-reduced-motion: reduce) { .pg-in > .wrap { opacity: 1; transform: none; } }
+/* Desktop: page-by-page scrolling */
+@media (min-width: 1000px) and (hover: hover) {
+  .hero, .apps, .services, .about, .process, .contact { min-height: 100vh; min-height: 100svh; box-sizing: border-box; }
+  .apps, .services, .about, .process, .contact { display: flex; flex-direction: column; justify-content: center; }
+  .apps > .wrap, .services > .wrap, .about > .wrap, .process > .wrap, .contact > .wrap { width: 100%; }
+  .apps, .services, .about, .process { padding-top: 70px; padding-bottom: 40px; }
+  .pagenav { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 40; display: flex; flex-direction: column; gap: 6px; }
+  .pagenav button { width: 22px; height: 22px; border: 0; padding: 0; background: none; cursor: pointer; position: relative; }
+  .pagenav button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: rgba(160,180,255,.4); transition: transform .3s, background .3s; }
+  .pagenav button[aria-current="true"]::before { background: var(--cyan); transform: scale(1.6); }
+  .pagenav button:hover::before { background: #fff; }
+}
+@media (max-width: 999px), (hover: none) { .pagenav { display: none; } }
+@media (min-width: 1000px) and (max-height: 720px) {
+  .hero { padding-top: 62px; }
+  .hero h1 { font-size: clamp(38px, 10.5vh, 96px); }
+  .eyebrow { margin-bottom: 12px; }
+  .sub { margin-top: 12px; font-size: 17px; }
+  .cta { margin-top: 16px; }
+  .hero-grid { padding-bottom: 6px; gap: 20px; }
+  .slide { padding-top: 16px; padding-bottom: 12px; }
+}
 /* contact form */
 .mail { display: inline-flex; align-items: center; gap: 14px; background: #fff; color: #1428a8; border: 0; border-radius: 99px; padding: 20px 30px 20px 34px; font: 800 clamp(20px, 4.4vw, 30px)/1 var(--display); letter-spacing: -.01em; cursor: pointer; box-shadow: 0 18px 40px -14px rgba(2,8,40,.7); transition: transform .2s, box-shadow .2s; animation: cta 2.8s ease-in-out infinite; }
 .mail:hover { background: #fff; color: #1428a8; transform: translateY(-3px); box-shadow: 0 24px 46px -14px rgba(2,8,40,.8); }
@@ -366,6 +396,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
   <p id="ask-q"></p>
   <div class="askbtns"><button type="button" class="go" id="ask-go"></button><button type="button" class="no" id="ask-no" aria-label="Zavrieť">✕</button></div>
 </div>
+<nav class="pagenav" id="pagenav" aria-label="Sekcie"></nav>
 <div id="cform-back" hidden></div>
 <form id="cform" role="dialog" aria-modal="true" aria-labelledby="cf-t" novalidate hidden>
   <button type="button" class="cf-x" id="cf-x" aria-label="Zavrieť">✕</button>
@@ -769,6 +800,51 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
       .catch(function () { cmsg.className = "cf-msg err"; cmsg.textContent = CF[lang].err; })
       .then(function () { csend.disabled = false; });
   });
+
+  /* page navigation (desktop) */
+  (function () {
+    var secs = [].slice.call(document.querySelectorAll(".hero, .apps, .services, .about, .process, .contact"));
+    var nav = document.getElementById("pagenav");
+    var names = ["Úvod", "Appky", "Služby", "O mne", "Postup", "Kontakt"];
+    secs.forEach(function (sc, i) {
+      if (i > 0) sc.classList.add("pg-in");
+      var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", names[i] || ("Sekcia " + (i + 1)));
+      b.onclick = function () { sc.scrollIntoView({ behavior: "smooth", block: "start" }); };
+      nav.appendChild(b);
+    });
+    if (!("IntersectionObserver" in window)) { secs.forEach(function (sc) { sc.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("in"); });
+    }, { threshold: .18 });
+    var cur = new IntersectionObserver(function (en) {
+      en.forEach(function (e) { if (e.isIntersecting) { var i = secs.indexOf(e.target); [].forEach.call(nav.children, function (d, k) { d.setAttribute("aria-current", k === i); }); } });
+    }, { threshold: .55 });
+    secs.forEach(function (sc) { io.observe(sc); cur.observe(sc); });
+
+    /* wheel paging: one wheel turn = next page (desktop with mouse/touchpad) */
+    var fine = window.matchMedia("(min-width: 1000px) and (hover: hover)");
+    var locked = false;
+    function idx() { var y = scrollY + 4, k = 0; secs.forEach(function (sc, i) { if (sc.offsetTop <= y) k = i; }); return k; }
+    function goTo(top) { locked = true; window.scrollTo({ top: top, behavior: "smooth" }); setTimeout(function () { locked = false; }, 950); }
+    window.addEventListener("wheel", function (e) {
+      if (!fine.matches || e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX) || Math.abs(e.deltaY) < 4) return;
+      if (document.getElementById("detail").classList.contains("open") || !document.getElementById("cform").hidden || document.getElementById("ask").classList.contains("on")) return;
+      var i = idx(), sc = secs[i], vh = innerHeight, down = e.deltaY > 0;
+      var top = sc.offsetTop, bottom = top + sc.offsetHeight;
+      if (locked) { e.preventDefault(); return; }
+      if (down) {
+        if (bottom - scrollY > vh + 6) return;
+        if (i >= secs.length - 1) return;
+        e.preventDefault(); goTo(secs[i + 1].offsetTop);
+      } else {
+        if (scrollY > top + 6) return;
+        if (i <= 0) return;
+        e.preventDefault();
+        var p = secs[i - 1], ph = p.offsetHeight;
+        goTo(ph > vh + 6 ? p.offsetTop + ph - vh : p.offsetTop);
+      }
+    }, { passive: false });
+  })();
 
   /* slider */
   var track = document.getElementById("track"), dotsEl = document.getElementById("dots");
