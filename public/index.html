@@ -330,20 +330,32 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 @keyframes nbounce { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
 @keyframes nbounceup { 0%, 100% { transform: rotate(180deg) translateY(-2px); } 50% { transform: rotate(180deg) translateY(3px); } }
 @media (prefers-reduced-motion: reduce) { .nextbtn svg, .nextbtn[data-mode="up"] svg { animation: none; } }
+/* hero character */
+.hero-char { display: none; }
+.hero-char img { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 40px rgba(47,91,255,.45)); }
+@media (min-width: 1000px) and (hover: hover) {
+  .hero-grid { position: relative; }
+  .hero-char { display: block; position: absolute; right: calc(50% - 50vw); bottom: -28px; width: min(44vw, calc((100vh - 150px) * 1.1)); z-index: 0; pointer-events: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%); mask-image: linear-gradient(90deg, transparent 0, #000 22%); }
+  .hero-grid .copy { position: relative; z-index: 1; }
+}
+@media (max-width: 999px), (hover: none) {
+  .hero-char { display: block; width: 46vw; max-width: 230px; margin: 4px auto 0; }
+}
+@media (max-width: 999px) and (max-height: 759px), (hover: none) and (max-height: 759px) { .hero-char { display: none; } }
 /* About illustration */
-.scene { margin: 0 auto 14px; max-width: 460px; }
-.scene svg { display: block; width: 100%; height: auto; overflow: visible; }
-.scene .fl { animation: scfl 6s ease-in-out infinite; }
-.scene .fl.b { animation-delay: -2s; } .scene .fl.c { animation-delay: -4s; }
-@keyframes scfl { 50% { transform: translateY(-8px); } }
-@media (prefers-reduced-motion: reduce), (max-width: 999px), (hover: none) { .scene .fl { animation: none; } }
+.scene { position: relative; margin: 0 auto 14px; width: min(100%, 440px); aspect-ratio: 1 / 0.95; }
+.scene .glow { position: absolute; inset: 8% 8%; background: radial-gradient(closest-side, rgba(47,91,255,.5), rgba(26,53,184,.18) 60%, transparent 75%); }
+.scene .ic { position: absolute; height: auto; filter: drop-shadow(0 8px 18px rgba(30,80,255,.55)); animation: scfl 6s ease-in-out var(--d,0s) infinite; }
+@keyframes scfl { 50% { transform: translateY(-9px); } }
+@media (prefers-reduced-motion: reduce), (max-width: 999px), (hover: none) { .scene .ic { animation: none; } }
 @media (min-width: 1000px) and (hover: hover) {
   .about > .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); grid-template-areas: "label scene" "big scene" "cols scene"; column-gap: clamp(24px, 4vw, 64px); align-items: start; }
   .about .label { grid-area: label; align-self: end; }
   .about .big { grid-area: big; font-size: clamp(28px, min(3.9vw, 7.2vh), 60px); }
   .about .cols { grid-area: cols; grid-template-columns: 1fr; gap: 14px; margin-top: clamp(12px, 2.6vh, 28px); }
   .scene { grid-area: scene; grid-row: 1 / span 3; align-self: center; margin: 0; max-width: none; width: 100%; }
-  .scene svg { max-height: calc(100vh - 150px); }
+  .scene { aspect-ratio: 1 / 0.9; max-height: calc(100vh - 170px); justify-self: center; }
 }
 
 /* page-turn effect on exit + strict paging on mobile */
@@ -503,6 +515,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
           <a class="btn ghost" href="#kontakt" data-cs="Napiš mi">Napíš mi</a>
         </div>
       </div>
+      <div class="hero-char" aria-hidden="true"><img src="img/char.webp" alt="" width="686" height="616" fetchpriority="high"></div>
     </div>
     <div class="barsl" role="region" aria-roledescription="carousel" aria-label="Projekty">
       <div class="slider"><div class="track" id="track"></div></div>
@@ -559,132 +572,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 
   <section class="about" id="o-mne">
     <div class="wrap">
-      <div class="scene"><svg viewBox="0 0 700 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustrácia: vývojár s notebookom a robotom">
-<defs>
-<radialGradient id="g1" cx="55%" cy="50%" r="55%"><stop offset="0" stop-color="#2f5bff" stop-opacity=".55"/><stop offset=".6" stop-color="#1a35b8" stop-opacity=".18"/><stop offset="1" stop-color="#1a35b8" stop-opacity="0"/></radialGradient>
-<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16308f" stop-opacity=".9"/><stop offset="1" stop-color="#0a1648" stop-opacity=".9"/></linearGradient>
-<linearGradient id="play" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52e0ff"/><stop offset=".5" stop-color="#4d8bff"/><stop offset="1" stop-color="#7cf0a6"/></linearGradient>
-<linearGradient id="hoodie" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#171d3d"/><stop offset="1" stop-color="#090c1f"/></linearGradient>
-<linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a5636"/><stop offset="1" stop-color="#4f2c1b"/></linearGradient>
-<linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6c3a0"/><stop offset="1" stop-color="#e29f78"/></linearGradient>
-<linearGradient id="bot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cdd7f6"/></linearGradient>
-<filter id="blur"><feGaussianBlur stdDeviation="6"/></filter>
-</defs>
-<rect width="700" height="600" fill="none"/>
-<circle cx="400" cy="300" r="320" fill="url(#g1)"/>
-
-<!-- floating panels -->
-<g class="fl a">
-<g transform="translate(20 56) skewY(-5)">
-<rect width="190" height="140" rx="14" fill="url(#gl)" stroke="#4d7dff" stroke-opacity=".8"/>
-<circle cx="18" cy="16" r="4" fill="#ff6b7d"/><circle cx="32" cy="16" r="4" fill="#ffd166"/><circle cx="46" cy="16" r="4" fill="#7dffb0"/>
-<rect x="18" y="38" width="70" height="7" rx="3.5" fill="#b18cff"/><rect x="96" y="38" width="60" height="7" rx="3.5" fill="#7fe3ff"/>
-<rect x="30" y="56" width="110" height="7" rx="3.5" fill="#7dffb0"/><rect x="30" y="74" width="80" height="7" rx="3.5" fill="#ffb86b"/>
-<rect x="30" y="92" width="130" height="7" rx="3.5" fill="#7fe3ff"/><rect x="18" y="110" width="50" height="7" rx="3.5" fill="#b18cff"/>
-</g></g>
-<g class="fl b">
-<rect x="228" y="6" width="104" height="138" rx="14" fill="url(#gl)" stroke="#4d7dff" stroke-opacity=".8"/>
-<rect x="252" y="20" width="56" height="106" rx="10" fill="#0a1648" stroke="#9fc0ff" stroke-width="2.5"/>
-<path d="M268 54l26 20-26 20z" fill="url(#play)"/>
-<circle cx="280" cy="112" r="2.6" fill="#9fc0ff"/>
-</g>
-<g class="fl c">
-<g transform="translate(535 28) skewY(5)">
-<rect width="150" height="118" rx="14" fill="url(#gl)" stroke="#4d7dff" stroke-opacity=".8"/>
-<rect x="22" y="70" width="18" height="30" rx="3" fill="#4d8bff"/><rect x="50" y="56" width="18" height="44" rx="3" fill="#52b8ff"/><rect x="78" y="42" width="18" height="58" rx="3" fill="#62d4ff"/><rect x="106" y="28" width="18" height="72" rx="3" fill="#7fe3ff"/>
-<path d="M20 52l36-20 28 10 44-28" fill="none" stroke="#7dffb0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M118 20l12-2-2 12" fill="none" stroke="#7dffb0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-</g></g>
-<!-- tech chips -->
-<g class="fl a">
-<rect x="618" y="168" width="64" height="64" rx="14" fill="url(#gl)" stroke="#4d7dff" stroke-opacity=".8"/>
-<g fill="none" stroke="#62d4ff" stroke-width="3"><ellipse cx="650" cy="200" rx="22" ry="8.5"/><ellipse cx="650" cy="200" rx="22" ry="8.5" transform="rotate(60 650 200)"/><ellipse cx="650" cy="200" rx="22" ry="8.5" transform="rotate(-60 650 200)"/></g><circle cx="650" cy="200" r="3.6" fill="#62d4ff"/>
-</g>
-<g class="fl b">
-<rect x="618" y="242" width="64" height="64" rx="14" fill="url(#gl)" stroke="#4d7dff" stroke-opacity=".8"/>
-<path d="M638 292l6-34 10 16 6-8 12 26-16 8z" fill="#ffb02e"/><path d="M644 258l10 16-4 8z" fill="#ffd166"/>
-</g>
-<g class="fl c">
-<rect x="612" y="316" width="76" height="46" rx="14" fill="url(#gl)" stroke="#4d7dff" stroke-opacity=".8"/>
-<rect x="624" y="328" width="52" height="30" rx="5" fill="none" stroke="#9fb4ff" stroke-width="2.5"/><rect x="624" y="335" width="52" height="7" fill="#9fb4ff"/><rect x="630" y="348" width="16" height="4" rx="2" fill="#9fb4ff"/>
-</g>
-
-<!-- chair -->
-<rect x="318" y="170" width="252" height="400" rx="70" fill="#0b1440" stroke="#2b4bd0" stroke-opacity=".6"/>
-
-<!-- body -->
-<path d="M262 600C262 470 300 390 400 380C500 390 548 470 548 600z" fill="url(#hoodie)" stroke="#2f5bff" stroke-opacity=".55" stroke-width="2"/>
-<path d="M330 390C340 350 460 350 470 390C450 410 350 410 330 390z" fill="#080b1c"/>
-<path d="M372 392c8 16 48 16 56 0" fill="#0b1030"/>
-<!-- neck -->
-<path d="M368 330h64v62c-18 20-46 20-64 0z" fill="#d98e68"/>
-<!-- head -->
-<g transform="rotate(-6 400 250)">
-<ellipse cx="318" cy="258" rx="11" ry="18" fill="#e59a72"/><ellipse cx="482" cy="258" rx="11" ry="18" fill="#e59a72"/>
-<path d="M326 220c0-62 34-96 74-96s74 34 74 96c0 54-10 92-74 108-64-16-74-54-74-108z" fill="url(#skin)"/>
-<!-- beard -->
-<path d="M328 268c4 34 22 66 72 74 50-8 68-40 72-74-10 12-20 20-34 22-10-8-28-12-38-12s-28 4-38 12c-14-2-24-10-34-22z" fill="#4f2c1b"/>
-<path d="M372 300c10 6 46 6 56 0c-6 14-50 14-56 0z" fill="#f6c3a0" opacity=".0"/>
-<path d="M376 310c8 8 40 8 48 0" fill="none" stroke="#f2b895" stroke-width="5" stroke-linecap="round"/>
-<path d="M372 292c14-8 42-8 56 0-14 4-42 4-56 0z" fill="#5d3322"/>
-<!-- eyes -->
-<path d="M346 236c10-9 26-9 36 0-10 8-26 8-36 0z" fill="#fff"/><path d="M418 236c10-9 26-9 36 0-10 8-26 8-36 0z" fill="#fff"/>
-<circle cx="365" cy="236" r="8.5" fill="#3d7bd6"/><circle cx="437" cy="236" r="8.5" fill="#3d7bd6"/>
-<circle cx="365" cy="236" r="4.2" fill="#0b1650"/><circle cx="437" cy="236" r="4.2" fill="#0b1650"/>
-<circle cx="368" cy="233" r="2.2" fill="#fff"/><circle cx="440" cy="233" r="2.2" fill="#fff"/>
-<path d="M342 232c10-12 28-12 40-2M418 230c12-10 30-10 40 2" fill="none" stroke="#2a1810" stroke-width="3" stroke-linecap="round"/>
-<!-- brows -->
-<path d="M338 214c12-12 32-14 48-6l-2 10c-14-6-30-4-44 4z" fill="#3a2114"/><path d="M414 208c16-8 36-6 48 6l-2 8c-14-8-30-10-44-4z" fill="#3a2114"/>
-<!-- nose, mouth -->
-<path d="M400 244c-2 14-8 22-12 26 8 5 20 5 28 0-4-4-10-12-12-26z" fill="#d68f69" opacity=".7"/>
-<path d="M378 292c10 6 30 4 44-4" fill="none" stroke="#9b4a3d" stroke-width="3" stroke-linecap="round"/>
-<path d="M376 288c-2 2-2 4 0 6" fill="none" stroke="#a45a44" stroke-width="2"/>
-<!-- hair -->
-<path d="M322 214c-10-60 18-108 76-112 56-4 90 34 82 112-6-26-18-40-40-46-4 14-12 22-26 24-6-10-10-16-14-26-14 18-30 30-62 36-8 4-12 8-16 12z" fill="url(#hair)"/>
-<path d="M330 150l-12-24 28 8-6-26 28 14 6-28 24 22 20-26 14 30 28-14-4 30" fill="url(#hair)" stroke="url(#hair)" stroke-width="10" stroke-linejoin="round"/>
-<path d="M356 126c14-12 40-16 60-8" fill="none" stroke="#b27a52" stroke-width="5" stroke-linecap="round" opacity=".8"/>
-</g>
-<!-- hoodie strings + logo -->
-<path d="M372 396l-8 70M428 396l8 70" stroke="#c9d4ff" stroke-width="3.5" stroke-linecap="round"/><circle cx="364" cy="470" r="4.5" fill="#c9d4ff"/><circle cx="436" cy="470" r="4.5" fill="#c9d4ff"/>
-<text x="400" y="500" text-anchor="middle" font-family="monospace" font-weight="700" font-size="30" fill="#62d4ff" filter="url(#blur)" opacity=".7">&lt;/&gt;</text>
-<text x="400" y="500" text-anchor="middle" font-family="monospace" font-weight="700" font-size="30" fill="#62d4ff">&lt;/&gt;</text>
-<!-- arm + fist -->
-<path d="M468 476C470 420 478 372 486 338L536 354C538 402 556 446 560 490Z" fill="url(#hoodie)" stroke="#2f5bff" stroke-opacity=".55" stroke-width="2"/>
-<path d="M452 322c-8-18 8-34 26-30 14-4 28 2 30 16 2 18-14 30-32 30z" fill="#e59a72"/>
-<path d="M464 300c4-4 10-4 14 0M480 296c4-3 10-3 14 1M494 302c4-2 8 0 10 4" fill="none" stroke="#c97c58" stroke-width="2.5" stroke-linecap="round"/>
-<rect x="500" y="336" width="48" height="34" rx="10" fill="#0a0e22" stroke="#4d7dff" transform="rotate(-24 524 353)"/>
-<text x="524" y="360" text-anchor="middle" font-family="monospace" font-weight="700" font-size="15" fill="#7fe3ff" transform="rotate(-24 524 353)">&lt;/&gt;</text>
-<!-- laptop -->
-<path d="M334 468L560 436L578 560L352 592z" fill="#262d4d" stroke="#6a8cff" stroke-width="2.5" stroke-linejoin="round"/>
-<path d="M342 476L552 446L566 548L358 578z" fill="#2f3862" opacity=".8"/>
-<text x="458" y="540" text-anchor="middle" font-family="monospace" font-weight="700" font-size="44" fill="#62d4ff" transform="rotate(-7 458 520)" filter="url(#blur)" opacity=".7">&lt;/&gt;</text>
-<text x="458" y="540" text-anchor="middle" font-family="monospace" font-weight="700" font-size="44" fill="#62d4ff" transform="rotate(-7 458 520)">&lt;/&gt;</text>
-<!-- leg + sneaker -->
-<path d="M548 560C600 520 690 500 700 540V600H540z" fill="#0a0d20" stroke="#2f5bff" stroke-opacity=".4"/>
-<path d="M570 600c4-28 30-40 70-40 36 0 56 12 60 40z" fill="#eef2ff"/><path d="M574 596c20 8 80 8 126 0v8H574z" fill="#2f5bff"/>
-<path d="M596 576l40-4M600 586l50-4" stroke="#2f5bff" stroke-width="4" stroke-linecap="round"/>
-
-<!-- robot -->
-<g transform="translate(28 0)"><g class="fl a">
-<line x1="168" y1="344" x2="160" y2="316" stroke="#cfd8f5" stroke-width="4" stroke-linecap="round"/><circle cx="159" cy="312" r="7" fill="#62d4ff"/>
-<line x1="238" y1="340" x2="246" y2="310" stroke="#cfd8f5" stroke-width="4" stroke-linecap="round"/><circle cx="247" cy="306" r="7" fill="#62d4ff"/>
-<circle cx="136" cy="388" r="22" fill="#cfd8f5"/><circle cx="136" cy="388" r="12" fill="#3fc3f0"/><circle cx="270" cy="388" r="22" fill="#cfd8f5"/><circle cx="270" cy="388" r="12" fill="#3fc3f0"/>
-<rect x="140" y="336" width="126" height="102" rx="44" fill="url(#bot)"/>
-<rect x="152" y="348" width="102" height="76" rx="32" fill="#0a1236"/>
-<path d="M172 392c0-14 20-14 20 0M214 392c0-14 20-14 20 0" fill="none" stroke="#62d4ff" stroke-width="7" stroke-linecap="round"/>
-<path d="M190 408c8 6 26 6 34 0" fill="none" stroke="#62d4ff" stroke-width="3.5" stroke-linecap="round" opacity=".7"/>
-<ellipse cx="204" cy="500" rx="64" ry="62" fill="url(#bot)"/>
-<ellipse cx="204" cy="512" rx="40" ry="40" fill="#e1e8fb"/>
-<rect x="172" y="458" width="92" height="66" rx="14" fill="#0e2a6b" stroke="#62d4ff" stroke-width="3" transform="rotate(-6 218 490)"/>
-<path d="M206 474l30 18-30 18z" fill="url(#play)" transform="rotate(-6 218 490)"/>
-<circle cx="164" cy="496" r="16" fill="url(#bot)"/><circle cx="268" cy="486" r="16" fill="url(#bot)"/>
-<ellipse cx="164" cy="566" rx="32" ry="18" fill="#c5d0f2"/><ellipse cx="256" cy="566" rx="32" ry="18" fill="#c5d0f2"/><ellipse cx="164" cy="570" rx="26" ry="10" fill="#101a46"/><ellipse cx="256" cy="570" rx="26" ry="10" fill="#101a46"/>
-</g></g>
-<!-- desk + props -->
-<rect x="0" y="578" width="700" height="22" fill="#0a1240"/><rect x="0" y="576" width="700" height="3" fill="#2f5bff" opacity=".6"/>
-<g transform="translate(20 480)"><path d="M10 40h70l-8 56H18z" fill="#2c3358" stroke="#4d7dff" stroke-opacity=".5"/><path d="M45 40c-30-10-40-30-34-46 22 4 34 20 34 46z" fill="#2f9e5a"/><path d="M45 40c26-6 42-24 34-44-22 6-34 22-34 44z" fill="#37b86a"/><path d="M45 40c-4-26 2-44 10-54 8 12 8 34-10 54z" fill="#43d17c"/></g>
-<g transform="translate(70 524)"><path d="M0 4h62l-4 48H4z" fill="#10152e" stroke="#4d7dff" stroke-opacity=".6"/><path d="M62 14c20 0 20 26 0 26" fill="none" stroke="#10152e" stroke-width="7"/><text x="30" y="40" text-anchor="middle" font-family="monospace" font-weight="700" font-size="22" fill="#62d4ff">&lt;/&gt;</text></g>
-</svg>
-</div>
+      <div class="scene" aria-hidden="true"><div class="glow"></div><img class="ic" src="img/chart.webp" alt="" loading="lazy" style="left:2%;top:6%;width:34%;--d:-0.0s"><img class="ic" src="img/phone.webp" alt="" loading="lazy" style="left:58%;top:2%;width:22%;--d:-0.8s"><img class="ic" src="img/code.webp" alt="" loading="lazy" style="left:6%;top:40%;width:34%;--d:-1.6s"><img class="ic" src="img/react.webp" alt="" loading="lazy" style="left:70%;top:32%;width:17%;--d:-2.4s"><img class="ic" src="img/firebase.webp" alt="" loading="lazy" style="left:44%;top:34%;width:17%;--d:-3.2s"><img class="ic" src="img/brain.webp" alt="" loading="lazy" style="left:22%;top:74%;width:19%;--d:-4.0s"><img class="ic" src="img/node.webp" alt="" loading="lazy" style="left:60%;top:66%;width:19%;--d:-4.8s"><img class="ic" src="img/card.webp" alt="" loading="lazy" style="left:80%;top:76%;width:23%;--d:-5.6s"></div>
       <p class="label" data-cs="O mně">O mne</p>
       <p class="big" style="margin-top:14px"><span data-cs="Jeden člověk na celý projekt:">Jeden človek na celý projekt:</span> <span class="hl" data-cs="od nápadu po appku v Google Play.">od nápadu po appku v Google Play.</span></p>
       <div class="cols">
