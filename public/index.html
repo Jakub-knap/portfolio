@@ -440,7 +440,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
     .hero > .wrap, .apps > .wrap, .services > .wrap, .about > .wrap, .process > .wrap, .stats-s > .wrap { animation: pageout linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
   }
 }
-@keyframes pageout { to { scale: .94; translate: 0 -28px; } }
+@keyframes pageout { to { translate: 0 -36px; opacity: .2; } }
 @media (max-width: 999px), (hover: none) {
   html { scroll-snap-type: y mandatory; }
   .hero, .apps, .services, .about, .process, .contact, .stats-s { scroll-snap-align: start; scroll-snap-stop: always; }
@@ -1033,9 +1033,13 @@ var EM = ["1jakub.knap1", "gmail.com"].join(String.fromCharCode(64));
 
     /* fit every page to one screen (desktop) */
     var wraps = secs.slice(1).map(function (sc) { return sc.querySelector(":scope > .wrap"); });
+    /* stable height on phones: the small viewport (URL bar shown) never changes while scrolling */
+    var probe = document.createElement("div");
+    probe.style.cssText = "position:fixed;left:0;top:0;width:0;height:100vh;height:100svh;visibility:hidden;pointer-events:none";
+    document.body.appendChild(probe);
     function fit() {
       wraps.forEach(function (w) { w.style.zoom = ""; });
-      var vh = innerHeight, d = fine.matches;
+      var d = fine.matches, vh = d ? innerHeight : (probe.getBoundingClientRect().height || innerHeight);
       wraps.forEach(function (w, i) {
         var sc = secs[i + 1], cs = getComputedStyle(sc);
         var avail = vh - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 8;
@@ -1046,7 +1050,15 @@ var EM = ["1jakub.knap1", "gmail.com"].join(String.fromCharCode(64));
     }
     var fitT = null;
     function fitSoon() { clearTimeout(fitT); fitT = setTimeout(fit, 80); }
-    window.addEventListener("resize", fitSoon);
+    var lastW = innerWidth, lastS = probe.getBoundingClientRect().height;
+    window.addEventListener("resize", function () {
+      if (!fine.matches) {
+        var sv = probe.getBoundingClientRect().height;
+        if (innerWidth === lastW && Math.abs(sv - lastS) < 2) return; /* only the URL bar moved */
+        lastW = innerWidth; lastS = sv;
+      }
+      fitSoon();
+    });
     window.__fit = fitSoon;
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
     window.addEventListener("load", fit);
