@@ -76,7 +76,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 @keyframes rise { from { transform: translateY(20px); } to { transform: none; } }
 
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 36px; padding-bottom: 36px; }
-.facts div { background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 20px; padding: 16px 20px; backdrop-filter: blur(8px); }
+.facts div { background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 20px; padding: 16px 20px; }
 .facts b { display: block; white-space: nowrap; margin-bottom: 6px; font: 800 46px/1 var(--display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .facts span { font-size: 14px; color: var(--muted); }
 .marquee { border-block: 1px solid var(--line); overflow: hidden; background: rgba(7,13,36,.6); }
@@ -89,7 +89,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 .slider { overflow: hidden; }
 .track { display: flex; transition: transform .8s cubic-bezier(.65,0,.2,1); touch-action: pan-y; }
 .slide { background: transparent; position: relative; flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 18px; align-items: center; text-align: left; border: 0; color: inherit; font: inherit; cursor: pointer; padding: 20px max(20px, calc((100% - 1140px) / 2)) 16px; overflow: hidden; }
-.slide::before { content: ""; position: absolute; left: -6%; top: 50%; width: 46%; height: 220%; transform: translateY(-50%) scale(.6); background: radial-gradient(closest-side, var(--c), transparent); opacity: 0; filter: blur(14px); transition: opacity 1s, transform 1.2s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
+.slide::before { content: ""; position: absolute; left: -6%; top: 50%; width: 46%; height: 220%; transform: translateY(-50%) scale(.6); background: radial-gradient(closest-side, var(--c), transparent); opacity: 0; transition: opacity 1s, transform 1.2s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
 .slide.on::before { opacity: .22; transform: translateY(-50%) scale(1); }
 .slide > * { position: relative; opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
 .slide.on > * { opacity: 1; transform: none; }
@@ -312,6 +312,23 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Mobile / tablet: flat phone, no continuous 3D compositing (smooth scrolling) */
+@media (max-width: 999px) {
+  .pwrap { perspective: none; }
+  .float { animation: none; transform-style: flat; }
+  .phone { transform-style: flat; transform: none !important; will-change: auto; }
+  .phone::after { display: none; }
+  .status, .icons, .widget, .app i, .launch { transform: none; }
+  .icons { transform-style: flat; }
+  .app { animation: none; transform-style: flat; }
+  .app:hover i, .app[aria-pressed="true"] i { transform: scale(1.06); }
+  .app:active i { transform: scale(.88); }
+  .widget { box-shadow: none; }
+  @keyframes pop { from { transform: scale(.4); opacity: 0; } }
+  @keyframes wup { from { transform: translateY(24px); opacity: 0; } }
+  @keyframes ping { 0%, 70%, 100% { transform: scale(1); } 80% { transform: scale(1.25); } 90% { transform: scale(.95); } }
 }
 </style>
 </head>
@@ -639,6 +656,10 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
     var phone = document.querySelector(".phone"), wrap = document.querySelector(".pwrap"), clk = document.getElementById("clk");
     function tick() { var d = new Date(); clk.textContent = d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2); }
     tick(); setInterval(tick, 20000);
+    if (window.innerWidth < 1000 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if ("IntersectionObserver" in window) { var mio = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { phone.classList.add("enter"); mio.disconnect(); } }, { threshold: .3 }); mio.observe(phone); } else phone.classList.add("enter");
+      return;
+    }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var px = 0, py = 0, sc = 0, gx = 50, gy = 18;
     var cx = 0, cy = 0, cs = 0, raf = 0, visible = true, gdirty = false;
