@@ -314,6 +314,28 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
+
+/* contact form */
+.mail { background: none; border: 0; border-bottom: 4px solid #fff; color: #fff; width: 100%; text-align: left; cursor: pointer; }
+#cform-back { position: fixed; inset: 0; z-index: 80; background: rgba(2,5,18,.78); }
+#cform { position: fixed; z-index: 81; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(460px, calc(100% - 28px)); max-height: calc(100dvh - 28px); overflow-y: auto; background: linear-gradient(165deg, #14246b, #0a1235 70%); border: 1px solid #34459a; border-radius: 26px; padding: 28px 24px 22px; color: #fff; box-shadow: 0 40px 90px -20px rgba(0,0,0,.8); animation: cfin .35s cubic-bezier(.2,.8,.2,1); }
+#cform[hidden], #cform-back[hidden] { display: none; }
+@keyframes cfin { from { opacity: 0; transform: translate(-50%, -46%) scale(.97); } }
+#cform h3 { font: 800 28px/1.1 var(--display); letter-spacing: -.02em; margin: 0 40px 6px 0; }
+.cf-s { color: #b6c2ea; font-size: 15px; margin: 0 0 18px; }
+.cf-x { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #38488a; background: transparent; color: #fff; font-size: 16px; cursor: pointer; }
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+#cform label { display: block; margin-bottom: 12px; font: 600 13px var(--body); color: #b6c2ea; }
+#cform input:not([name=botcheck]), #cform textarea { display: block; width: 100%; margin-top: 6px; padding: 12px 14px; border-radius: 12px; border: 1px solid #38488a; background: rgba(5,9,30,.7); color: #fff; font: 400 16px var(--body); }
+#cform textarea { resize: vertical; min-height: 110px; }
+#cform input:focus, #cform textarea:focus { outline: 2px solid var(--cyan); outline-offset: 1px; border-color: transparent; }
+#cform .bad { border-color: #ff6b7d !important; }
+.cf-send { width: 100%; margin-top: 4px; padding: 14px; border: 0; border-radius: 99px; background: #fff; color: #1428a8; font: 700 16px var(--body); cursor: pointer; }
+.cf-send:disabled { opacity: .6; cursor: default; }
+.cf-msg { min-height: 1.2em; margin: 12px 0 0; font: 600 14px var(--body); }
+.cf-msg.ok { color: #7dffb0; } .cf-msg.err { color: #ff9aa8; }
+.cf-fine { color: #8493c4; font-size: 12px; margin: 8px 0 0; }
+@media (max-width: 420px) { .cf-row { grid-template-columns: 1fr; gap: 0; } }
 /* Mobile / tablet: flat phone, no continuous 3D compositing (smooth scrolling) */
 @media (max-width: 999px) {
   .pwrap { perspective: none; }
@@ -340,6 +362,22 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
   <p id="ask-q"></p>
   <div class="askbtns"><button type="button" class="go" id="ask-go"></button><button type="button" class="no" id="ask-no" aria-label="Zavrieť">✕</button></div>
 </div>
+<div id="cform-back" hidden></div>
+<form id="cform" role="dialog" aria-modal="true" aria-labelledby="cf-t" novalidate hidden>
+  <button type="button" class="cf-x" id="cf-x" aria-label="Zavrieť">✕</button>
+  <h3 id="cf-t" data-cs="Napište mi">Napíš mi</h3>
+  <p class="cf-s" data-cs="Odpovím vám zpravidla do 24 hodin.">Odpoviem ti spravidla do 24 hodín.</p>
+  <div class="cf-row">
+    <label><span data-cs="Jméno">Meno</span><input name="fname" autocomplete="given-name" required></label>
+    <label><span data-cs="Příjmení">Priezvisko</span><input name="lname" autocomplete="family-name" required></label>
+  </div>
+  <label><span data-cs="E-mail (na odpověď)">E-mail (na odpoveď)</span><input name="email" type="email" autocomplete="email" inputmode="email" required></label>
+  <label><span data-cs="Zpráva">Správa</span><textarea name="message" rows="4" required></textarea></label>
+  <input type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0">
+  <button type="submit" class="cf-send" id="cf-send" data-cs="Odeslat zprávu">Odoslať správu</button>
+  <p class="cf-msg" id="cf-msg" role="status"></p>
+  <p class="cf-fine" data-cs="Odesláním souhlasíte se zpracováním údajů pouze za účelem odpovědi.">Odoslaním súhlasíš so spracovaním údajov len na účel odpovede.</p>
+</form>
 <div id="detail" role="dialog" aria-modal="true" aria-label="Projekt"></div>
 
 <header>
@@ -449,7 +487,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 <section class="contact" id="kontakt">
   <div class="wrap">
     <h2 data-cs="Máte nápad?">Máte nápad?</h2>
-    <a class="mail" href="mailto:1jakub.knap1@gmail.com">1jakub.knap1@gmail.com</a>
+    <button class="mail" type="button" id="open-form"><span data-cs="Ozvěte se">Ozvi sa</span> <span aria-hidden="true">→</span></button>
     <div class="crow">
       <button class="b" type="button" id="copy" data-cs="Kopírovat adresu">Skopírovať adresu</button>
       <span class="toast" id="toast" role="status"></span>
@@ -701,6 +739,32 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
       io.observe(phone);
     }
   })();
+
+  /* contact form */
+  var WEB3_KEY = "";
+  var cform = document.getElementById("cform"), cback = document.getElementById("cform-back"), cmsg = document.getElementById("cf-msg"), csend = document.getElementById("cf-send");
+  var CF = { sk: { req: "Vyplň všetky polia správne.", sending: "Odosielam…", ok: "Ďakujem! Správa je odoslaná, ozvem sa čoskoro.", err: "Nepodarilo sa odoslať. Skús to znova alebo napíš na 1jakub.knap1@gmail.com." }, cs: { req: "Vyplňte správně všechna pole.", sending: "Odesílám…", ok: "Děkuji! Zpráva je odeslána, brzy se ozvu.", err: "Odeslání se nepodařilo. Zkuste to znovu nebo napište na 1jakub.knap1@gmail.com." } };
+  function openForm() { cform.hidden = false; cback.hidden = false; cmsg.textContent = ""; cmsg.className = "cf-msg"; setTimeout(function () { cform.fname.focus(); }, 60); }
+  function closeForm() { cform.hidden = true; cback.hidden = true; }
+  document.getElementById("open-form").onclick = openForm;
+  document.getElementById("cf-x").onclick = closeForm;
+  cback.addEventListener("click", closeForm);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !cform.hidden) closeForm(); });
+  cform.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = cform, ok = true;
+    ["fname", "lname", "email", "message"].forEach(function (n) { var el = f[n], bad = !el.value.trim() || (n === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())); el.classList.toggle("bad", bad); if (bad) ok = false; });
+    if (!ok) { cmsg.className = "cf-msg err"; cmsg.textContent = CF[lang].req; return; }
+    if (f.botcheck.value) return;
+    var name = f.fname.value.trim() + " " + f.lname.value.trim();
+    if (!WEB3_KEY) { location.href = "mailto:1jakub.knap1@gmail.com?subject=" + encodeURIComponent("Správa z portfólia – " + name) + "&body=" + encodeURIComponent(f.message.value + "\n\n" + name + "\n" + f.email.value); return; }
+    csend.disabled = true; cmsg.className = "cf-msg"; cmsg.textContent = CF[lang].sending;
+    fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ access_key: WEB3_KEY, subject: "Nová správa z portfólia – " + name, from_name: "Portfólio", name: name, email: f.email.value.trim(), message: f.message.value.trim() }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (!d.success) throw 0; cmsg.className = "cf-msg ok"; cmsg.textContent = CF[lang].ok; f.reset(); setTimeout(closeForm, 3200); })
+      .catch(function () { cmsg.className = "cf-msg err"; cmsg.textContent = CF[lang].err; })
+      .then(function () { csend.disabled = false; });
+  });
 
   /* slider */
   var track = document.getElementById("track"), dotsEl = document.getElementById("dots");
